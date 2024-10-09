@@ -3,5 +3,7 @@ import { BudgetContext } from '../context/BudgetContext';
 
 export default function useBudget() {
 	const context = useContext(BudgetContext);
-	console.log(context);
+	if (!context)
+		throw new Error('useBudget must be used within a BudgetProvider');
+	return { ...context };
 }
