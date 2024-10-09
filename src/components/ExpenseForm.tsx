@@ -1,0 +1,143 @@
+import { FormEvent, useState } from 'react';
+import DatePicker from 'react-date-picker';
+import 'react-calendar/dist/Calendar.css';
+import 'react-date-picker/dist/DatePicker.css';
+import { useBudget, useForm } from '../hooks';
+import { validateForm } from '../helpers';
+import { DateValue, DraftExpense } from '../types';
+import { categories } from '../data/categories';
+
+export default function ExpenseForm() {
+	const {
+		formState: expense,
+		setFormState: setExpense,
+		handleChange,
+	} = useForm<DraftExpense>({
+		name: '',
+		amount: 0,
+		category: '0',
+		date: new Date(),
+	});
+	const [error, setError] = useState<string | null>(null);
+	const { dispatch } = useBudget();
+
+	const handleChangeDate = (value: DateValue) => {
+		setExpense({ ...expense, date: value });
+	};
+
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+
+		// Validamos
+		if (!validateForm(expense)) {
+			setError('Todos los campos son obligatorios');
+			return;
+		}
+
+		// Agregamos el gasto
+		setError(null);
+		dispatch({ type: 'add-expense', payload: expense });
+	};
+
+	return (
+		<form
+			className="space-y-6"
+			onSubmit={handleSubmit}
+		>
+			<legend className="uppercase text-center text-2xl font-bold py-2">
+				Nuevo Gasto
+			</legend>
+
+			{error && (
+				<p className="bg-red-600 p-2 text-white font-bold text-sm text-center">
+					{error}
+				</p>
+			)}
+
+			<div className="flex items-center justify-stretch gap-2">
+				<label
+					htmlFor="name"
+					className="text-lg min-w-20"
+				>
+					Nombre:{' '}
+				</label>
+				<input
+					id="name"
+					type="text"
+					name="name"
+					value={expense.name}
+					onChange={handleChange}
+					placeholder="Añade el nombre del gasto"
+					className="bg-slate-100 p-2 flex-1 border-gray-300 border-2 rounded"
+				/>
+			</div>
+			<div className="flex items-center justify-stretch gap-2">
+				<label
+					htmlFor="amount"
+					className="text-lg min-w-20"
+				>
+					Cantidad:{' '}
+				</label>
+				<input
+					id="amount"
+					type="number"
+					name="amount"
+					value={expense.amount}
+					onChange={handleChange}
+					placeholder="Añade la cantidad del gasto ej.300"
+					className="bg-slate-100 p-2 flex-1 border-gray-300 border-2 rounded"
+				/>
+			</div>
+			<div className="flex items-center justify-stretch gap-2">
+				<label
+					htmlFor="category"
+					className="text-lg min-w-20"
+				>
+					Categoria:{' '}
+				</label>
+				<select
+					id="category"
+					name="category"
+					onChange={handleChange}
+					defaultValue={expense.category}
+					className="bg-slate-100 p-2 flex-1 border-gray-300 border-2 rounded"
+				>
+					<option
+						disabled
+						value={0}
+					>
+						-- SELECCIONE LA CATEGORIA --
+					</option>
+					{categories.map((category) => (
+						<option
+							key={category.id}
+							value={category.id}
+						>
+							{category.name}
+						</option>
+					))}
+				</select>
+			</div>
+			<div className="flex items-center justify-stretch gap-2">
+				<label
+					htmlFor="date"
+					className="text-lg min-w-20"
+				>
+					Fecha:{' '}
+				</label>
+				<DatePicker
+					id="date"
+					name="date"
+					value={expense.date}
+					onChange={handleChangeDate}
+					className="bg-slate-100 p-2 border-0"
+				/>
+			</div>
+			<input
+				type="submit"
+				value="Registrar Gasto"
+				className="bg-blue-600 cursor-pointer w-full p-2 text-white uppercase font-bold rounded"
+			/>
+		</form>
+	);
+}

@@ -6,6 +6,7 @@ export default function BudgetForm() {
 	const [budget, setBudget] = useState(0);
 
 	const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+		if (!target.value) return setBudget(0);
 		setBudget(target.valueAsNumber);
 	};
 
