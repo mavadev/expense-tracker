@@ -15,6 +15,10 @@ export type BudgetActions =
 	| {
 			type: 'add-expense';
 			payload: DraftExpense;
+	  }
+	| {
+			type: 'remove-expense';
+			payload: Expense['id'];
 	  };
 
 export interface BudgetState {
@@ -49,6 +53,14 @@ export const budgetReducer = (
 				...state,
 				modal: false,
 				expenses: [...state.expenses, newExpense],
+			};
+
+		case 'remove-expense':
+			return {
+				...state,
+				expenses: state.expenses.filter(
+					(expense) => expense.id != action.payload
+				),
 			};
 
 		default:

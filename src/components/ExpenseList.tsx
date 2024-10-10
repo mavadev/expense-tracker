@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useBudget } from '../hooks';
 import { ExpenseDetail } from '../components';
-import { SwipeableList } from 'react-swipeable-list';
 
 export default function ExpenseList() {
 	const { state } = useBudget();
@@ -17,14 +16,12 @@ export default function ExpenseList() {
 	return (
 		<div className="mt-5">
 			<h2 className="font-bold text-2xl mb-5">Listado de Gastos</h2>
-			<SwipeableList>
-				{state.expenses.map((expense) => (
-					<ExpenseDetail
-						key={expense.id}
-						expense={expense}
-					/>
-				))}
-			</SwipeableList>
+			{state.expenses.map((expense) => (
+				<ExpenseDetail
+					key={expense.id}
+					expense={expense}
+				/>
+			))}
 		</div>
 	);
 }
