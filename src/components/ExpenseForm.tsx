@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import DatePicker from 'react-date-picker';
 import 'react-calendar/dist/Calendar.css';
 import 'react-date-picker/dist/DatePicker.css';
@@ -19,7 +19,16 @@ export default function ExpenseForm() {
 		date: new Date(),
 	});
 	const [error, setError] = useState<string | null>(null);
-	const { dispatch } = useBudget();
+	const { state, dispatch } = useBudget();
+
+	useEffect(() => {
+		if (state.expenseEditID) {
+			const editingExpense = state.expenses.filter(
+				(expense) => expense.id == state.expenseEditID
+			)[0];
+			setExpense(editingExpense);
+		}
+	}, [state.expenseEditID]);
 
 	const handleChangeDate = (value: DateValue) => {
 		setExpense({ ...expense, date: value });
@@ -27,16 +36,24 @@ export default function ExpenseForm() {
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-
 		// Validamos
 		if (!validateForm(expense)) {
 			setError('Todos los campos son obligatorios');
 			return;
 		}
-
 		// Agregamos el gasto
 		setError(null);
-		dispatch({ type: 'add-expense', payload: expense });
+		if (state.expenseEditID) {
+			dispatch({
+				type: 'update-expense',
+				payload: { ...expense, id: state.expenseEditID },
+			});
+		} else {
+			dispatch({
+				type: 'add-expense',
+				payload: expense,
+			});
+		}
 	};
 
 	return (
@@ -45,7 +62,7 @@ export default function ExpenseForm() {
 			onSubmit={handleSubmit}
 		>
 			<legend className="uppercase text-center text-2xl font-bold py-2">
-				Nuevo Gasto
+				{state.expenseEditID ? 'Actualizar' : 'Nuevo'} Gasto
 			</legend>
 
 			{error && (
@@ -135,7 +152,7 @@ export default function ExpenseForm() {
 			</div>
 			<input
 				type="submit"
-				value="Registrar Gasto"
+				value={state.expenseEditID ? 'Guardar Cambios' : 'Registrar'}
 				className="bg-blue-600 cursor-pointer w-full p-2 text-white uppercase font-bold rounded"
 			/>
 		</form>
