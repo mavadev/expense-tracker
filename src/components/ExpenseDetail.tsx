@@ -29,7 +29,7 @@ export default function ExpenseDetail({ expense }: ExpenseDetailProps) {
 		<LeadingActions>
 			<SwipeAction
 				onClick={() =>
-					dispatch({ type: 'update-expense', payload: expense.id })
+					dispatch({ type: 'set-update-expense', payload: expense.id })
 				}
 			>
 				Actualizar

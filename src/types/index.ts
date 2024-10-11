@@ -1,5 +1,5 @@
 export type Category = {
-	id: string;
+	id: number;
 	name: string;
 	icon: string;
 };
@@ -11,7 +11,7 @@ export type Expense = {
 	id: string;
 	name: string;
 	amount: number;
-	category: string;
+	category: number;
 	date: DateValue;
 };
 

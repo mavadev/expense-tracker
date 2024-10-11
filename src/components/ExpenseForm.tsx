@@ -15,7 +15,7 @@ export default function ExpenseForm() {
 	} = useForm<DraftExpense>({
 		name: '',
 		amount: 0,
-		category: '0',
+		category: 0,
 		date: new Date(),
 	});
 	const [error, setError] = useState<string | null>(null);
@@ -93,7 +93,7 @@ export default function ExpenseForm() {
 					htmlFor="amount"
 					className="text-lg min-w-20"
 				>
-					Cantidad:{' '}
+					Monto:{' '}
 				</label>
 				<input
 					id="amount"
@@ -116,7 +116,7 @@ export default function ExpenseForm() {
 					id="category"
 					name="category"
 					onChange={handleChange}
-					defaultValue={expense.category}
+					value={expense.category}
 					className="bg-slate-100 p-2 flex-1 border-gray-300 border-2 rounded"
 				>
 					<option
