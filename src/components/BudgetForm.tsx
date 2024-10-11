@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent, useMemo } from 'react';
+import { useState, ChangeEvent, FormEvent, useMemo, FocusEvent } from 'react';
 import { useBudget } from '../hooks';
 
 export default function BudgetForm() {
@@ -36,6 +36,7 @@ export default function BudgetForm() {
 				onChange={handleChange}
 				placeholder="Define tu presupuesto"
 				className="w-full bg-white border border-gray-200 p-2"
+				onFocus={(e: FocusEvent<HTMLInputElement>) => e.target.select()}
 			/>
 
 			<input

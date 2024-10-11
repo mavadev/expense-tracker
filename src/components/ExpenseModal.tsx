@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, memo, useCallback } from 'react';
 import {
 	Dialog,
 	DialogPanel,
@@ -9,16 +9,18 @@ import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { useBudget } from '../hooks';
 import { ExpenseForm } from '../components';
 
-export default function ExpenseModal() {
+export default memo(function ExpenseModal() {
 	const { state, dispatch } = useBudget();
 
-	const handleShow = () => {
-		dispatch({ type: 'show-modal' });
-	};
+	const handleShow = useCallback(
+		() => dispatch({ type: 'show-modal' }),
+		[dispatch]
+	);
 
-	const handleClose = () => {
-		dispatch({ type: 'close-modal' });
-	};
+	const handleClose = useCallback(
+		() => dispatch({ type: 'close-modal' }),
+		[dispatch]
+	);
 
 	return (
 		<>
@@ -74,4 +76,4 @@ export default function ExpenseModal() {
 			</Transition>
 		</>
 	);
-}
+});

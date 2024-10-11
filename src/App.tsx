@@ -24,7 +24,7 @@ function App() {
 				</h1>
 			</header>
 			{!isValidBudget ? (
-				<section className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-10">
+				<section className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 py-10 px-20">
 					<BudgetForm />
 				</section>
 			) : (

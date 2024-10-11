@@ -1,16 +1,33 @@
-import { AmountDisplay } from '../components';
+import { useCallback, useMemo } from 'react';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 import { useBudget } from '../hooks';
+import { AmountDisplay } from '../components';
 
 export default function BudgetTracker() {
-	const { state, totalExpenses, totalRemaining } = useBudget();
+	const { state, totalExpenses, totalRemaining, dispatch } = useBudget();
+
+	const percentage = useMemo(
+		() => +((totalExpenses / state.budget) * 100).toFixed(2),
+		[totalExpenses, state.budget]
+	);
+
+	const handleResetApp = useCallback(
+		() => dispatch({ type: 'reset-app' }),
+		[dispatch]
+	);
 
 	return (
 		<section className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-10">
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-				<div className="flex justify-center">
-					<img
-						src="/grafico.jpg"
-						alt="Grafico de Gastos"
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+				<div>
+					<CircularProgressbar
+						value={percentage}
+						styles={buildStyles({
+							pathColor: '#3B82F6',
+							trailColor: '#DEDEDE',
+						})}
+						text={`${percentage}%`}
 					/>
 				</div>
 				<div className="flex flex-col justify-center gap-3">
@@ -28,9 +45,10 @@ export default function BudgetTracker() {
 					/>
 					<button
 						type="button"
-						className="bg-pink-600 w-full p-2 text-white uppercase font-bold rounded-lg mt-3"
+						onClick={handleResetApp}
+						className="bg-pink-600 w-full p-3 text-white uppercase font-bold rounded-lg mt-3"
 					>
-						Resetear App
+						Limpiar Presupuesto
 					</button>
 				</div>
 			</div>

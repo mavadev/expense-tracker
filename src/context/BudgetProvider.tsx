@@ -13,7 +13,10 @@ export const BudgetProvider = ({ children }: BudgetProviderProps) => {
 		() => state.expenses.reduce((total, expense) => expense.amount + total, 0),
 		[state.expenses]
 	);
-	const totalRemaining = state.budget - totalExpenses;
+	const totalRemaining = useMemo(
+		() => state.budget - totalExpenses,
+		[state.budget, totalExpenses]
+	);
 
 	return (
 		<BudgetContext.Provider

@@ -7,12 +7,6 @@ export type BudgetActions =
 			payload: number;
 	  }
 	| {
-			type: 'show-modal';
-	  }
-	| {
-			type: 'close-modal';
-	  }
-	| {
 			type: 'add-expense';
 			payload: DraftExpense;
 	  }
@@ -27,6 +21,15 @@ export type BudgetActions =
 	| {
 			type: 'update-expense';
 			payload: Expense;
+	  }
+	| {
+			type: 'show-modal';
+	  }
+	| {
+			type: 'close-modal';
+	  }
+	| {
+			type: 'reset-app';
 	  };
 
 export interface BudgetState {
@@ -61,12 +64,6 @@ export const budgetReducer = (
 		case 'add-budget':
 			return { ...state, budget: action.payload };
 
-		case 'show-modal':
-			return { ...state, modal: true };
-
-		case 'close-modal':
-			return { ...state, modal: false, expenseEditID: '' };
-
 		case 'add-expense': {
 			const newExpense = { id: uuidv4(), ...action.payload };
 			return {
@@ -99,6 +96,20 @@ export const budgetReducer = (
 				expenses: expensesUpdated,
 			};
 		}
+
+		case 'show-modal':
+			return { ...state, modal: true };
+
+		case 'close-modal':
+			return { ...state, modal: false, expenseEditID: '' };
+
+		case 'reset-app':
+			return {
+				budget: 0,
+				modal: false,
+				expenses: [],
+				expenseEditID: '',
+			};
 
 		default:
 			return state;
