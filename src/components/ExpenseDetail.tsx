@@ -55,8 +55,9 @@ export default function ExpenseDetail({ expense }: ExpenseDetailProps) {
 			<SwipeableListItem
 				leadingActions={leadActions()}
 				trailingActions={trailActions()}
+				className="mb-5 shadow-lg rounded-lg select-none"
 			>
-				<div className="bg-white shadow-lg rounded-lg p-10 w-full border-b border-gray-200 flex items-center gap-5 select-none">
+				<div className="bg-white p-10 w-full border-b border-gray-200 flex items-center gap-5 ">
 					<div className="w-1/5">
 						<img
 							className="w-20"

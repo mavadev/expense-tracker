@@ -8,7 +8,7 @@ export default function BudgetTracker() {
 	const { state, totalExpenses, totalRemaining, dispatch } = useBudget();
 
 	const percentage = useMemo(
-		() => +((totalExpenses / state.budget) * 100).toFixed(2),
+		() => +((totalExpenses / state.budget) * 100).toFixed(1),
 		[totalExpenses, state.budget]
 	);
 
