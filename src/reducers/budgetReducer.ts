@@ -36,10 +36,20 @@ export interface BudgetState {
 	expenseEditID: Expense['id'];
 }
 
+const initialBudget = (): number => {
+	const localBudget = localStorage.getItem('budget');
+	return localBudget ? +localBudget : 0;
+};
+
+const initialExpenses = (): Expense[] => {
+	const localExpenses = localStorage.getItem('expenses');
+	return localExpenses?.length ? JSON.parse(localExpenses) : [];
+};
+
 export const initialState: BudgetState = {
-	budget: 0,
+	budget: initialBudget(),
 	modal: false,
-	expenses: [],
+	expenses: initialExpenses(),
 	expenseEditID: '',
 };
 
