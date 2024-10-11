@@ -1,10 +1,10 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-date-picker';
 import 'react-calendar/dist/Calendar.css';
 import 'react-date-picker/dist/DatePicker.css';
 import { useBudget, useForm } from '../hooks';
-import { validateForm } from '../helpers';
 import { DateValue, DraftExpense } from '../types';
+import { formatCurrency, validateForm } from '../helpers';
 import { categories } from '../data/categories';
 
 export default function ExpenseForm() {
@@ -18,16 +18,24 @@ export default function ExpenseForm() {
 		category: 0,
 		date: new Date(),
 	});
+
 	const [error, setError] = useState<string | null>(null);
-	const { state, dispatch } = useBudget();
+	const [prevAmount, setPrevAmount] = useState(0);
+	const { state, dispatch, totalRemaining } = useBudget();
+
+	const remaining = useMemo(
+		() => totalRemaining + prevAmount,
+		[prevAmount, totalRemaining]
+	);
 
 	useEffect(() => {
-		if (state.expenseEditID) {
-			const editingExpense = state.expenses.filter(
-				(expense) => expense.id == state.expenseEditID
-			)[0];
-			setExpense(editingExpense);
-		}
+		if (!state.expenseEditID) return;
+
+		const expenseEdit = state.expenses.filter(
+			(expense) => expense.id == state.expenseEditID
+		)[0];
+		setExpense(expenseEdit);
+		setPrevAmount(expenseEdit.amount);
 	}, [state.expenseEditID]);
 
 	const handleChangeDate = (value: DateValue) => {
@@ -36,9 +44,14 @@ export default function ExpenseForm() {
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// Validamos
+		// Validar campos de form
 		if (!validateForm(expense)) {
 			setError('Todos los campos son obligatorios');
+			return;
+		}
+		// Validar que el gasto no supere el presupuesto restante
+		if (expense.amount > remaining) {
+			setError('El gasto excede el presupuesto restante');
 			return;
 		}
 		// Agregamos el gasto
@@ -48,12 +61,9 @@ export default function ExpenseForm() {
 				type: 'update-expense',
 				payload: { ...expense, id: state.expenseEditID },
 			});
-		} else {
-			dispatch({
-				type: 'add-expense',
-				payload: expense,
-			});
+			return;
 		}
+		dispatch({ type: 'add-expense', payload: expense });
 	};
 
 	return (
@@ -61,8 +71,11 @@ export default function ExpenseForm() {
 			className="space-y-6"
 			onSubmit={handleSubmit}
 		>
-			<legend className="uppercase text-center text-2xl font-bold py-2">
-				{state.expenseEditID ? 'Actualizar' : 'Nuevo'} Gasto
+			<legend className="uppercase text-center text-2xl font-bold py-2 flex flex-col gap-2">
+				<span>{state.expenseEditID ? 'Actualizar' : 'Nuevo'} Gasto</span>
+				<span className="text-green-800">
+					Disponible: {formatCurrency(remaining)}
+				</span>
 			</legend>
 
 			{error && (
